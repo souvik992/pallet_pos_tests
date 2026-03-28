@@ -23,7 +23,9 @@
       "Bash(claude doctor:*)",
       "Bash(npm install:*)",
       "Bash(timeout /t 5 /nobreak)",
-      "Bash(node -e \":*)"
+      "Bash(node -e \":*)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :3000)"
     ]
   }
 }
