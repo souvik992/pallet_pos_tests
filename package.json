@@ -1,0 +1,57 @@
+{
+  "name": "pallet-pos-tests",
+  "version": "1.0.0",
+  "description": "Playwright smoke tests for Pallet POS application",
+  "scripts": {
+    "server:dev": "ts-node-dev --respawn --transpile-only server/index.ts",
+    "server:build": "tsc",
+    "server:start": "node dist/server/index.js",
+    "test": "npx playwright test --project=smoke-tests",
+    "test:setup": "npx playwright test --project=setup",
+    "test:all": "npx playwright test",
+    "test:login": "npx playwright test tests/smoke/login.smoke.spec.ts",
+    "test:homepage": "npx playwright test tests/smoke/homepage.smoke.spec.ts",
+    "test:catalog": "npx playwright test tests/smoke/product-catalog.smoke.spec.ts",
+    "test:kds": "npx playwright test tests/smoke/kitchen-display.smoke.spec.ts",
+    "test:orders": "npx playwright test tests/smoke/orders.smoke.spec.ts",
+    "test:returns": "npx playwright test tests/smoke/returns.smoke.spec.ts",
+    "test:session": "npx playwright test tests/smoke/session.smoke.spec.ts",
+    "test:navigation": "npx playwright test tests/smoke/navigation.smoke.spec.ts",
+    "test:pages": "npx playwright test tests/smoke/pages-load.smoke.spec.ts",
+    "test:complete-login": "npx playwright test tests/smoke/complete-login-flow.smoke.spec.ts",
+    "test:form-validation": "npx playwright test tests/smoke/form-validation.smoke.spec.ts",
+    "test:session-auth": "npx playwright test tests/smoke/session-auth.smoke.spec.ts",
+    "test:ui-elements": "npx playwright test tests/smoke/ui-elements.smoke.spec.ts",
+    "test:performance": "npx playwright test tests/smoke/performance.smoke.spec.ts",
+    "test:error-handling": "npx playwright test tests/smoke/error-handling.smoke.spec.ts",
+    "test:new-tests": "npx playwright test tests/smoke/complete-login-flow.smoke.spec.ts tests/smoke/form-validation.smoke.spec.ts tests/smoke/session-auth.smoke.spec.ts tests/smoke/ui-elements.smoke.spec.ts tests/smoke/performance.smoke.spec.ts tests/smoke/error-handling.smoke.spec.ts",
+    "test:unified-auth": "npx playwright test tests/auth.setup.ts",
+    "test:table-layout": "npx playwright test tests/smoke/table-layout.smoke.spec.ts",
+    "test:layout-nav": "npx playwright test tests/sanity/layout-navigation-bar.sanity.spec.ts",
+    "test:quick-action": "npx playwright test tests/sanity/quick-action-button.sanity.spec.ts",
+    "test:occupy-table": "npx playwright test tests/sanity/occupy-table.sanity.spec.ts",
+    "test:orders-new": "npx playwright test tests/sanity/orders-new.sanity.spec.ts",
+    "test:cart": "npx playwright test tests/sanity/cart.sanity.spec.ts",
+    "report": "npx playwright show-report",
+    "install:browsers": "npx playwright install --with-deps chromium"
+  },
+  "keywords": [
+    "playwright",
+    "pos",
+    "smoke-tests",
+    "e2e"
+  ],
+  "author": "Souvik",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/express": "^4.17.21",
+    "@types/node": "^25.5.0",
+    "dotenv": "^16.4.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^6.0.2"
+  }
+}

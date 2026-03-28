@@ -1,0 +1,91 @@
+name: Pallet POS — Playwright Tests
+
+on:
+  # Triggered by /playwright Slack slash command via the middleware server
+  repository_dispatch:
+    types: [playwright-test]
+
+  # Manual trigger from the GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Test suite: all | smoke | sanity | login | cart | …"
+        required: false
+        default: "all"
+      browser:
+        description: "Browser: chromium | firefox | webkit"
+        required: false
+        default: "chromium"
+      triggered_by:
+        description: "Slack user ID (optional — for the results message)"
+        required: false
+        default: ""
+
+jobs:
+  test:
+    name: Run Playwright Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      # Resolve payload from repository_dispatch or workflow_dispatch inputs
+      SUITE:        ${{ github.event.client_payload.suite        || inputs.suite        || 'all' }}
+      BROWSER:      ${{ github.event.client_payload.browser      || inputs.browser      || 'chromium' }}
+      SLACK_TRIGGERED_BY: ${{ github.event.client_payload.triggered_by || inputs.triggered_by || '' }}
+
+      # App credentials (stored as GitHub Actions secrets)
+      BASE_URL:     ${{ secrets.BASE_URL }}
+      POS_USERNAME: ${{ secrets.POS_USERNAME }}
+      POS_PIN:      ${{ secrets.POS_PIN }}
+
+      # Slack (reporter posts directly to #qa-automation)
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SLACK_CHANNEL:   "#qa-automation"
+
+      # Expose run URL to the Slack reporter
+      GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps ${{ env.BROWSER }}
+
+      - name: Run Playwright tests
+        id: run_tests
+        run: |
+          # Build grep filter for named suites
+          case "$SUITE" in
+            all)     FILTER="" ;;
+            smoke)   FILTER="--grep smoke" ;;
+            sanity)  FILTER="--grep sanity" ;;
+            *)       FILTER="--grep $SUITE" ;;
+          esac
+
+          # Run tests; capture exit code without aborting the step
+          set +e
+          npx playwright test $FILTER --project=all-tests
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+          set -e
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Fail job if tests failed
+        if: steps.run_tests.outputs.exit_code != '0'
+        run: exit 1
