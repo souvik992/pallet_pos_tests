@@ -12,10 +12,6 @@ export default defineConfig({
   reporter: [
     ["html", { open: "never" }],
     ["list"],
-    // Posts results to #qa-automation when SLACK_BOT_TOKEN is present
-    ...(process.env.SLACK_BOT_TOKEN
-      ? [["./reporters/slack-reporter.ts"] as [string]]
-      : []),
   ],
   timeout: 60_000,
 
