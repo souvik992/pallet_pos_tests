@@ -868,30 +868,36 @@ test.describe("Cart", () => {
     console.log(`[TC-C-04] Accordion groups found: ${headerCount}`);
     expect(headerCount).toBeGreaterThanOrEqual(3);
 
-    // ── Step 6: Verify each group timestamp is within 2 min of placement ──
+    // ── Step 6: Verify each group timestamp matches placement time (H:MM only) ─
+    // Header shows H:MM am/pm — no seconds. Compare at minute precision only,
+    // allowing ≤1 minute diff to account for minute boundary rollovers.
     for (let i = 0; i < 3; i++) {
       const text = (await headers.nth(i).textContent().catch(() => ""))?.trim() ?? "";
       console.log(`[TC-C-04] Group ${i + 1} header: "${text}"`);
 
       expect(text, `Group ${i + 1} header should contain a timestamp`).toMatch(/\d{1,2}:\d{2}\s*(am|pm)/i);
 
-      const headerTime = parseHeaderTime(text);
+      const headerTime = parseHeaderTime(text); // already zeroes seconds + ms
       expect(headerTime, `Group ${i + 1}: could not parse time from "${text}"`).not.toBeNull();
 
       if (headerTime) {
-        const diffMin = Math.abs(headerTime.getTime() - orderTimes[i].getTime()) / 60_000;
+        // Truncate recorded time to minute precision (ignore seconds + ms)
+        const orderTimeTruncated = new Date(orderTimes[i]);
+        orderTimeTruncated.setSeconds(0, 0);
+
+        const diffMin = Math.abs(headerTime.getTime() - orderTimeTruncated.getTime()) / 60_000;
         console.log(
-          `[TC-C-04] Group ${i + 1} — Header time: ${headerTime.toLocaleTimeString()} | ` +
-          `Placed at: ${orderTimes[i].toLocaleTimeString()} | Diff: ${diffMin.toFixed(1)} min`
+          `[TC-C-04] Group ${i + 1} — Header: ${headerTime.toLocaleTimeString()} | ` +
+          `Placed: ${orderTimeTruncated.toLocaleTimeString()} | Diff: ${diffMin.toFixed(1)} min`
         );
         expect(
           diffMin,
-          `Group ${i + 1} timestamp should be within 2 minutes of order placement time`
-        ).toBeLessThanOrEqual(2);
+          `Group ${i + 1} timestamp should match placement time (H:MM) within 1 minute`
+        ).toBeLessThanOrEqual(1);
       }
     }
 
-    console.log(`[TC-C-04] ✓ All 3 order groups have timestamps within 2 min of placement.`);
+    console.log(`[TC-C-04] ✓ All 3 order groups have timestamps matching placement time (H:MM).`);
   });
 
   // ── A66: KOT visible in each order group ─────────────────────────────────
