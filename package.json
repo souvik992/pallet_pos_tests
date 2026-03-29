@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Playwright smoke tests for Pallet POS application",
   "scripts": {
-    "server:dev": "ts-node-dev --respawn --transpile-only server/index.ts",
-    "server:build": "tsc",
-    "server:start": "node dist/server/index.js",
     "test": "npx playwright test --project=smoke-tests",
     "test:setup": "npx playwright test --project=setup",
     "test:all": "npx playwright test",
@@ -43,15 +40,11 @@
   ],
   "author": "Souvik",
   "license": "ISC",
-  "dependencies": {
-    "express": "^4.19.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "@types/express": "^4.17.21",
     "@types/node": "^25.5.0",
     "dotenv": "^16.4.5",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^6.0.2"
   }
 }
