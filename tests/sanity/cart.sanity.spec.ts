@@ -1120,24 +1120,14 @@ test.describe("Cart", () => {
     await expect(qtyInput).toHaveValue("1", { timeout: 5_000 });
     console.log(`[TC-C-08] Quantity after first add: 1 ✓`);
 
-    // ── Step 3: Tap the same product 4 more times → verify quantity is 5 ──
-    // Find the first non-variant catalog item (same one addFirstSimpleItem picked)
-    // and click its button (Add / + depending on POS state) 4 more times.
+    // ── Step 3: Increment the cart item 4 more times via the (+) stepper ──
+    // Using the cart's increaseItemQuantity button avoids triggering add-on
+    // modals that some catalog items open when their catalog card button is clicked.
+    const incBtn = page.locator(".increaseItemQuantity").first();
+    await expect(incBtn).toBeVisible({ timeout: 5_000 });
     for (let tap = 1; tap <= 4; tap++) {
-      const items = page.locator(".particularCategoryEachItemCFS");
-      const itemCount = await items.count();
-      for (let i = 0; i < itemCount; i++) {
-        const item = items.nth(i);
-        const hasVariants = await item.locator("text=More Variants").isVisible().catch(() => false);
-        if (hasVariants) continue;
-        // After first add the button may switch to a quantity stepper; click last button in the card
-        const btn = item.locator("button").last();
-        if (await btn.isVisible({ timeout: 1_000 }).catch(() => false)) {
-          await btn.click();
-          await page.waitForTimeout(400);
-        }
-        break;
-      }
+      await incBtn.click();
+      await page.waitForTimeout(300);
     }
 
     await expect(qtyInput).toHaveValue("5", { timeout: 5_000 });

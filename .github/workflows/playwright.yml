@@ -66,10 +66,14 @@ jobs:
         run: |
           # Build grep filter for named suites
           case "$SUITE" in
-            all)     FILTER="" ;;
-            smoke)   FILTER="--grep smoke" ;;
-            sanity)  FILTER="--grep sanity" ;;
-            *)       FILTER="--grep $SUITE" ;;
+            all)          FILTER="" ;;
+            smoke)        FILTER="--grep smoke" ;;
+            sanity)       FILTER="--grep sanity" ;;
+            sanity-cart)  FILTER="tests/sanity/cart.sanity.spec.ts" ;;
+            sanity-login) FILTER="tests/sanity/login.sanity.spec.ts" ;;
+            smoke-cart)   FILTER="tests/smoke/cart.smoke.spec.ts" ;;
+            smoke-login)  FILTER="tests/smoke/login.smoke.spec.ts" ;;
+            *)            FILTER="--grep $SUITE" ;;
           esac
 
           # Run tests; capture exit code without aborting the step
