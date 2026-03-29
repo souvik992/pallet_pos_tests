@@ -260,6 +260,7 @@ async function quickReleaseTables(page: Page): Promise<void> {
   console.log("  [release] No grey table — releasing active tables first...");
   const MAX = 60;
   for (let i = 0; i < MAX; i++) {
+    try {
     await page.goto(TABLE_LAYOUT_URL);
     await page.waitForLoadState("domcontentloaded");
     const boardVisible = await page.locator(".tableStructureBoard").isVisible({ timeout: 10_000 }).catch(() => false);
@@ -267,24 +268,29 @@ async function quickReleaseTables(page: Page): Promise<void> {
 
     // Find first active (non-grey) table
     const cards = page.locator(".tableStyle");
-    const count = await cards.count();
+    const count = await cards.count().catch(() => 0);
     let found = false;
     for (let j = 0; j < count; j++) {
-      const bg = await cards.nth(j).evaluate((el: HTMLElement) => window.getComputedStyle(el).backgroundColor);
-      if (!ACTIVE_COLORS.includes(bg)) continue;
+      const bg = await cards.nth(j).evaluate((el: HTMLElement) => window.getComputedStyle(el).backgroundColor).catch(() => "");
+      if (!bg || !ACTIVE_COLORS.includes(bg)) continue;
       const num = (await cards.nth(j).locator("p").first().textContent().catch(() => ""))?.trim();
       console.log(`  [release] Processing table ${num} (${colorName(bg)})...`);
 
       // Dismiss overlay then click
       await page.keyboard.press("Escape");
       await page.waitForTimeout(200);
-      await cards.nth(j).dispatchEvent("click");
+      await cards.nth(j).click({ force: true });
       await page.waitForTimeout(1_500);
 
-      const onCart =
-        (page.url().includes("/products/") && !page.url().includes("particularcategorypage")) ||
-        (await page.locator(".cartAndSidebarContainer").isVisible({ timeout: 5_000 }).catch(() => false));
-      if (!onCart) { found = true; break; }
+      const onCart = await page.locator(".cartAndSidebarContainer").isVisible({ timeout: 8_000 }).catch(() => false);
+      if (!onCart) {
+        // Click didn't navigate to cart — dismiss any stray popup and skip this table
+        await page.keyboard.press("Escape");
+        await page.waitForTimeout(300);
+        await page.goto(TABLE_LAYOUT_URL);
+        await page.waitForLoadState("domcontentloaded");
+        continue;
+      }
 
       // Decide: pay or release
       const hasSkip   = await page.locator("button").filter({ hasText: /skip.*print|skip.*bill/i }).first().isVisible({ timeout: 2_000 }).catch(() => false);
@@ -313,6 +319,13 @@ async function quickReleaseTables(page: Page): Promise<void> {
     if (!found) {
       console.log("  [release] All tables are grey — floor is clear.");
       break;
+    }
+    } catch (err: any) {
+      if (/canceled|cancelled|closed|destroyed/i.test(err?.message ?? "")) {
+        console.log("  [release] Operation canceled — stopping release loop gracefully.");
+        break;
+      }
+      throw err;
     }
   }
 }
