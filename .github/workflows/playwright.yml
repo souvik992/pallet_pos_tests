@@ -25,7 +25,7 @@ jobs:
   test:
     name: Run Playwright Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
 
     env:
       # Resolve payload from repository_dispatch or workflow_dispatch inputs
@@ -82,6 +82,14 @@ jobs:
           echo "exit_code=$?" >> $GITHUB_OUTPUT
           set -e
 
+      - name: Ensure report exists
+        if: always()
+        run: |
+          mkdir -p playwright-report
+          if [ ! -f playwright-report/index.html ]; then
+            echo "<html><body><h1>No report generated — tests may have failed during setup.</h1></body></html>" > playwright-report/index.html
+          fi
+
       - name: Upload HTML report
         if: always()
         uses: actions/upload-artifact@v4
@@ -89,6 +97,7 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 14
+          if-no-files-found: warn
 
       - name: Fail job if tests failed
         if: steps.run_tests.outputs.exit_code != '0'

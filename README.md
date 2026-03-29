@@ -72,6 +72,23 @@ pallet-pos-tests/
 │       └── pages-load.smoke.spec.ts      # All pages load verification
 ```
 
+## Triggering Tests via Slack
+
+Use the `/playwright` slash command in Slack to trigger a test run:
+
+| Slack Command | Runs |
+|---|---|
+| `/playwright` | All tests |
+| `/playwright sanity` | All sanity tests |
+| `/playwright smoke` | All smoke tests |
+| `/playwright sanity-cart` | Sanity cart tests only |
+| `/playwright sanity-login` | Sanity login tests only |
+| `/playwright smoke-cart` | Smoke cart tests only |
+| `/playwright smoke-login` | Smoke login tests only |
+| `/playwright sanity firefox` | All sanity tests on Firefox |
+
+Results are posted back to the Slack channel after the run completes.
+
 ## Pages Covered
 
 | Page               | Route                                |
