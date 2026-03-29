@@ -318,8 +318,10 @@ async function quickReleaseTables(page: Page): Promise<void> {
     }
     if (!found) {
       console.log("  [release] All tables are grey — floor is clear.");
-      break;
     }
+    // Exit after one attempt — occupyTable only needs one grey table,
+    // and it retries tryOccupyGrey after this call returns.
+    break;
     } catch (err: any) {
       if (/canceled|cancelled|closed|destroyed/i.test(err?.message ?? "")) {
         console.log("  [release] Operation canceled — stopping release loop gracefully.");
@@ -372,11 +374,21 @@ async function occupyTable(page: Page): Promise<string | null> {
   }
   await expect(page.locator(".tableStructureBoard")).toBeVisible({ timeout: 15_000 });
 
-  // Wait for table cards to render AND receive their colors from the server.
-  // The board can be visible while cards still show placeholder grey — a small
-  // wait prevents tryOccupyGrey from scanning before colors are applied.
+  // Wait for ALL table cards to render and receive their colors from the server.
+  // The board can be visible while cards still show placeholder grey.
+  // Wait until the count stabilises at the expected number (up to 50 tables).
   await page.locator(".tableStyle").first().waitFor({ state: "visible", timeout: 15_000 });
-  await page.waitForTimeout(2_000);
+
+  // Poll until table count stabilises (all 50 loaded) or timeout after 8s
+  let stableCount = 0;
+  for (let w = 0; w < 16; w++) {
+    const c = await page.locator(".tableStyle").count();
+    if (c === stableCount && c > 0) break;
+    stableCount = c;
+    await page.waitForTimeout(500);
+  }
+  // Extra settle time for server-pushed colors to apply
+  await page.waitForTimeout(1_500);
 
   // Helper: find and click the first grey table, return its number or null
   async function tryOccupyGrey(): Promise<string | null> {
