@@ -512,7 +512,7 @@ async function enterCart(page: Page): Promise<boolean> {
 // ─── tests ──────────────────────────────────────────────────────────────────
 
 test.describe("Cart", () => {
-  test.describe.configure({ mode: "serial", timeout: 300_000 });
+  test.describe.configure({ mode: "default", timeout: 300_000 });
 
   // Shared across TC-C-01 → TC-C-02
   let occupiedTableNum: string | null = null;
