@@ -177,6 +177,14 @@ export default async function globalSetup() {
       }
     }
 
+    // Ensure we land on the products page before saving auth state.
+    // "Login as manager" can redirect to root (/), session-listing, or homepage.
+    if (!page.url().includes("/products/")) {
+      await page.goto(`${baseURL}/products/particularcategorypage`);
+      await page.waitForLoadState("domcontentloaded");
+      await page.waitForTimeout(2_000);
+    }
+
     console.log("[globalSetup] Auth complete. URL:", page.url());
 
     await context.storageState({ path: "auth-state.json" });

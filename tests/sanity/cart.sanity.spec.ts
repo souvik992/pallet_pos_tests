@@ -38,6 +38,31 @@ async function loginIfNeeded(page: Page): Promise<void> {
     await page.waitForTimeout(1_000);
   }
 
+  // Handle session start-day / terminal selection / cash amount
+  if (page.url().includes("/session-page")) {
+    const startDayBtn = page.getByRole("button", { name: /start day/i });
+    if (await startDayBtn.isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await startDayBtn.click();
+      await page.waitForTimeout(2_000);
+    }
+    if (await page.getByText("Select Terminal").isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await page.locator('[class*="dropdown"]').first().click();
+      await page.waitForTimeout(500);
+      await page.locator('text="Terminal 1"').first().click();
+      await page.getByRole("button", { name: "Start session" }).click();
+      await page.waitForTimeout(1_000);
+    }
+    if (await page.getByText("Cash amount").isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await page.getByPlaceholder("Enter cash amount").fill("1");
+      await page.getByRole("button", { name: "Login as manager" }).click();
+      await page.waitForTimeout(2_000);
+    }
+    await page.goto(TABLE_LAYOUT_URL);
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(1_500);
+    return;
+  }
+
   // Handle session-listing → go to cart
   if (page.url().includes("/session-page/session-listing")) {
     const goToCart = page.getByRole("button", { name: "Go to cart" });
