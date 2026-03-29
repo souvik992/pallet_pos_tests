@@ -6,3 +6,4 @@ playwright-report/
 blob-report/
 .env
 auth-state.json
+advanced-auth-state.json
