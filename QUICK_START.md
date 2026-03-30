@@ -23,7 +23,7 @@ npm run install:browsers
 # Create/verify .env file with credentials
 cat .env
 # Should contain:
-# BASE_URL=https://upcoming-pos.palletnow.co
+# BASE_URL=https://pos.palletnow.co
 # POS_USERNAME=7872735817
 # POS_PIN=1111
 ```
@@ -130,7 +130,7 @@ cat .env
 ```
 Should be:
 ```
-BASE_URL=https://upcoming-pos.palletnow.co
+BASE_URL=https://pos.palletnow.co
 POS_USERNAME=7872735817
 POS_PIN=1111
 ```

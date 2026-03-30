@@ -15,7 +15,7 @@ export default async function globalSetup() {
   const username = process.env.POS_USERNAME || "7872735817";
   const pin = process.env.POS_PIN || "1111";
   const baseURL =
-    process.env.BASE_URL || "https://upcoming-pos.palletnow.co";
+    process.env.BASE_URL || "https://pos.palletnow.co";
 
   // ── Fast path: reuse existing auth state if it is fresh (< 2 hours) ───────
   const authFile = "auth-state.json";

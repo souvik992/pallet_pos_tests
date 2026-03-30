@@ -1,6 +1,6 @@
 # Pallet POS - Playwright Smoke Tests
 
-Automated smoke tests for the [Pallet POS](https://upcoming-pos.palletnow.co) application using Playwright and TypeScript.
+Automated smoke tests for the [Pallet POS](https://pos.palletnow.co) application using Playwright and TypeScript.
 
 ## Setup
 
@@ -20,7 +20,7 @@ cp .env.example .env
 Edit `.env` with your POS credentials:
 
 ```
-BASE_URL=https://upcoming-pos.palletnow.co
+BASE_URL=https://pos.palletnow.co
 POS_USERNAME=your_mobile_number
 POS_PIN=your_pin
 ```

@@ -28,7 +28,7 @@ dotenv.config();
  * Source: webPOS Fine dine tab, rows A47–A54
  */
 
-const BASE_URL = process.env.BASE_URL || "https://upcoming-pos.palletnow.co";
+const BASE_URL = process.env.BASE_URL || "https://pos.palletnow.co";
 const TABLE_LAYOUT_URL = `${BASE_URL}/products/particularcategorypage`;
 
 const COLORS = {

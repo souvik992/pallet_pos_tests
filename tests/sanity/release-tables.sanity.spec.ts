@@ -16,7 +16,7 @@ dotenv.config();
  * Repeats passes until all tables are grey (max 5 passes).
  */
 
-const BASE_URL = process.env.BASE_URL || "https://upcoming-pos.palletnow.co";
+const BASE_URL = process.env.BASE_URL || "https://pos.palletnow.co";
 const TABLE_LAYOUT_URL = `${BASE_URL}/products/particularcategorypage`;
 
 const COLORS = {

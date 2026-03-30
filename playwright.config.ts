@@ -19,7 +19,7 @@ export default defineConfig({
   globalSetup: "./tests/global.setup.ts",
 
   use: {
-    baseURL: process.env.BASE_URL || "https://upcoming-pos.palletnow.co",
+    baseURL: process.env.BASE_URL || "https://pos.palletnow.co",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "off",

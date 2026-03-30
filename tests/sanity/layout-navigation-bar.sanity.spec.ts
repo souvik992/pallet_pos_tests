@@ -17,7 +17,7 @@ dotenv.config();
  * Source: webPOS Fine dine tab, rows A27–A39
  */
 
-const BASE_URL = process.env.BASE_URL || "https://upcoming-pos.palletnow.co";
+const BASE_URL = process.env.BASE_URL || "https://pos.palletnow.co";
 const TABLE_LAYOUT_URL = `${BASE_URL}/products/particularcategorypage`;
 
 // Helper: get a nav button by its label text
