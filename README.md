@@ -1,6 +1,6 @@
 # Pallet POS - Playwright Typescript Test Suite
 
-Automated smoke tests for the [Pallet POS](https://pos.palletnow.co) application using Playwright and TypeScript.
+Automated tests for the [Pallet POS](https://pos.palletnow.co) application using Playwright and TypeScript.
 
 ## Setup
 
