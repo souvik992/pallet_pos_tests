@@ -35,7 +35,7 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         storageState: "auth-state.json",
-        headless: !!process.env.CI,
+        headless: process.env.CI ? true : process.env.HEADLESS === "true",
       },
     },
   ],
